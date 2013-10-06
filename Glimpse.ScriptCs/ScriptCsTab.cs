@@ -8,47 +8,10 @@ using System.Threading.Tasks;
 using Glimpse.AspNet.Extensibility;
 using Glimpse.Core.Extensibility;
 using ScriptCs.Contracts;
+using ScriptCs;
 
 namespace Glimpse.ScriptCs
 {
-    public class GlimpseContext : IScriptPackContext
-    {
-        public ITabContext Context { get; private set; }
-
-        public GlimpseContext(ITabContext ctx)
-        {
-            Context = ctx;
-        }
-    }
-
-    public class GlimpseContextScriptPack : IScriptPack
-    {
-        private readonly GlimpseContext _ctx;
-
-        public GlimpseContextScriptPack(ITabContext ctx)
-        {
-            _ctx = new GlimpseContext(ctx);
-        }
-
-        public void Initialize(IScriptPackSession session)
-        {
-            session.AddReference("System.Web");
-            session.ImportNamespace("Glimpse.ScriptCs");
-            session.ImportNamespace("System.Web");
-            session.ImportNamespace("Glimpse.AspNet.Extensions");
-        }
-
-        public IScriptPackContext GetContext()
-        {
-            return _ctx;
-        }
-
-        public void Terminate()
-        {
-            
-        }
-    }
-
     public class ScriptCsTab : AspNetTab
     {
         private string LoadCode(string path)
@@ -65,7 +28,9 @@ namespace Glimpse.ScriptCs
             glimpseResult.Add(new object[] {"Executed code", code});
 
             var host = new ScriptCsHost();
-            host.Root.Executor.Initialize(new[] { LoadCode("bin\\Glimpse.Core.dll"), LoadCode("bin\\Glimpse.AspNet.dll"), LoadCode("bin\\Glimpse.ScriptCs.dll"), LoadCode("bin\\ScriptCs.Contracts.dll") }, new[] { new GlimpseContextScriptPack(context),  });
+            host.Root.Executor.Initialize(new[] { "System.Web" }, new[] { new GlimpseContextScriptPack(context),  });
+            host.Root.Executor.AddReferenceAndImportNamespaces(new[] { typeof(ITabContext), typeof(AspNetTab), typeof(ScriptCsTab), typeof(IScriptExecutor) });
+            
             var result = host.Root.Executor.ExecuteScript(code, new string[0]);
             host.Root.Executor.Terminate();
 
