@@ -94,6 +94,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlimpsePack.cs" />
+    <Compile Include="GlimpseContextScriptPack.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="ScriptCsTab.cs" />
     <Compile Include="CodeConfigurableLog4NetLogger.cs" />
