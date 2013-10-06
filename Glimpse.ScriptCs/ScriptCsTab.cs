@@ -23,8 +23,16 @@ namespace Glimpse.ScriptCs
         public override object GetData(ITabContext context)
         {
             var glimpseResult = new List<object[]>();
-            var code = File.ReadAllText(LoadCode("glimpse.csx"));
 
+            var filepath = LoadCode("glimpse.csx");
+
+            if (!File.Exists(filepath))
+            {
+                glimpseResult.Add(new[] { "Script result", "No code found" });
+                return glimpseResult;
+            }
+
+            var code = File.ReadAllText(filepath);
             glimpseResult.Add(new object[] {"Executed code", code});
 
             var host = new ScriptCsHost();
