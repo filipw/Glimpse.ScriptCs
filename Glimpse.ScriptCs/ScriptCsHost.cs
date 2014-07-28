@@ -1,6 +1,10 @@
-﻿using ScriptCs;
-using ScriptCs.Contracts;
+﻿using System.Web;
+using ScriptCs;
 using log4net;
+using ScriptCs.Engine.Roslyn;
+using ScriptCs.Hosting;
+using LogLevel = ScriptCs.Contracts.LogLevel;
+
 
 namespace Glimpse.ScriptCs
 {
@@ -15,8 +19,17 @@ namespace Glimpse.ScriptCs
 
             var scriptServicesBuilder =
                 new ScriptServicesBuilder(new ScriptConsole(), commonLogger).LogLevel(LogLevel.Info)
-                                                                            .InMemory(true)
-                                                                            .Repl(false);
+                    .Repl(false)
+                    .ScriptEngine<RoslynScriptInMemoryEngine>();
+
+            /* to enable dynamic redirects, which I am not sure are needed for this use case.
+             
+            var appDomainResolver = scriptServicesBuilder.InitializationServices.GetAppDomainAssemblyResolver();
+            var assemblies = System.IO.Directory.EnumerateFiles(HttpContext.Current.Server.MapPath("bin"), "*.dll");
+            appDomainResolver.AddAssemblyPaths(assemblies);
+             
+             */
+
             Root = scriptServicesBuilder.Build();
         }
     }
