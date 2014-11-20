@@ -1,6 +1,8 @@
-﻿using ScriptCs;
-using ScriptCs.Contracts;
-using log4net;
+﻿using Common.Logging;
+using ScriptCs;
+using ScriptCs.Engine.Roslyn;
+using ScriptCs.Hosting;
+using LogLevel = ScriptCs.Contracts.LogLevel;
 
 namespace Glimpse.ScriptCs
 {
@@ -11,12 +13,12 @@ namespace Glimpse.ScriptCs
         public ScriptCsHost()
         {
             var logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-            var commonLogger = new CodeConfigurableLog4NetLogger(logger);
 
             var scriptServicesBuilder =
-                new ScriptServicesBuilder(new ScriptConsole(), commonLogger).LogLevel(LogLevel.Info)
-                                                                            .InMemory(true)
-                                                                            .Repl(false);
+                new ScriptServicesBuilder(new ScriptConsole(), logger).LogLevel(LogLevel.Info)
+                                                                            .Cache(false)
+                                                                            .Repl(false)
+                                                                            .ScriptEngine<RoslynScriptEngine>();
             Root = scriptServicesBuilder.Build();
         }
     }
